@@ -21,7 +21,7 @@ def sgvb(model, train, test, batch_size, n_steps, eval_freq, estim_elbo,
     start = time.time()
     for t in range(n_steps):
         batch = bgen.next_batch()
-        w = model.reparam()
+        w = model.reparam() #not clear what it does!!! :(
         dlldw = log_likel_grad(batch, w)
         model.step(dlldw)
         if (t+1)%eval_freq == 0:

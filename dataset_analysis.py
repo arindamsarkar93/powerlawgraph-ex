@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 
 DATA_ROOT = '/home/arindam/code/powerlawgraph/data/';
 
-filename = DATA_ROOT+'500Air.pickle'
+dataset = 'polblogs.pickle';
+
+filename = DATA_ROOT+dataset
 with open(filename, 'rb') as f:
     graph = pickle.load(f)
 

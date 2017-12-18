@@ -19,9 +19,9 @@ class tBFRYrGamma(GammaGamma):
         self.a = self.sp(self.var[0:N])
         self.b = self.sp(self.var[N:2*N])
 
-        self.alpha = np.random.beta(1.,1.) if alpha is None else alpha
+        self.alpha = np.random.beta(1.,1.) if alpha is None else alpha #beta(1,1) is unif(0,1)
         self.alpha = min(self.alpha, alpha_ub)
-        self.var[-1] = self.sig.inv(self.alpha)
+        self.var[-1] = self.sig.inv(self.alpha) #logit fn
 
     def reparam(self, debug=False):
         super(tBFRYrGamma, self).reparam(debug=debug)
@@ -107,7 +107,7 @@ class tBFRYrGamma(GammaGamma):
             Z, _ = quad(f, 0.0, C)
             f = lambda x: -(x**(-alpha-1)*log(x)*(1-exp(-x)))
             gZ, _ = quad(f, 0.0, C)
-        dLdalpha = -N*gZ/Z - log(w).sum()
+        dLdalpha = -N*gZ/Z - log(w).sum() #grad step for alpha
 
         grad = np.append(np.concatenate(
             [dLda*self.sp.jacobian(a), dLdb*self.sp.jacobian(b)]),
