@@ -7,6 +7,7 @@ import time
 import argparse
 import os
 
+#performs Stochastic VB, no big deal here! 3 terms => log_likelihood, log_prior, log_posterior approximating dist
 def sgvb(model, train, test, batch_size, n_steps, eval_freq, estim_elbo,
         logfile=None):
     res = {}
@@ -21,12 +22,12 @@ def sgvb(model, train, test, batch_size, n_steps, eval_freq, estim_elbo,
     start = time.time()
     for t in range(n_steps):
         batch = bgen.next_batch()
-        w = model.reparam() #not clear what it does!!! :(
+        w = model.reparam() #<--------Remaining--------------
         dlldw = log_likel_grad(batch, w)
-        model.step(dlldw)
+        model.step(dlldw) #param update
         if (t+1)%eval_freq == 0:
             line = 'step %d/%d (%.3f secs), ' % (t+1, n_steps, time.time()-start)
-            w = model.sample_q(S=25) #No. of samples of latent parameter w
+            w = model.sample_q(S=25) #<--------Remaining;  #No. of samples of latent parameter w
             if estim_elbo:
                 elbo = 0.
                 n_train = len(train)
