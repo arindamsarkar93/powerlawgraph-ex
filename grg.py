@@ -8,11 +8,12 @@ def sample_graph(w):
     r = np.outer(u, u)
     p = r/(r + 1.)
     X = (np.random.rand(N, N) < p).astype(int)
-    X = np.triu(X, k=1)
+    X = np.triu(X, k=1) #only upper triangular part
 
     graph = {}
     graph['N'] = N
-    graph['row'], graph['col'], _ = scipy.sparse.find(X)
+    graph['row'], graph['col'], _ = scipy.sparse.find(X) #compact representation of edges of graph
+    #form: {row,col} indicating two end points of each edge
 
     return graph
 
@@ -67,19 +68,23 @@ def log_likel_grad(pairs, w): #grad of LL wrt w latent variable
 
     row = pairs[:,0]
     col = pairs[:,1]
-    denom = 1./(wsum + np.outer(w, w)[row, col] + eps)
+    denom = 1./(wsum + np.outer(w, w)[row, col] + eps) #-ve term coming from differential of log G(r)^-1;
+    #L in denom. will be removed as it is constant. Note: row-col => edge
+
     gw = -(denom.sum())*np.ones(N)
 
     gw -= np.bincount(row, weights=w[col]*denom, minlength=N)
     gw -= np.bincount(col, weights=w[row]*denom, minlength=N)
+    #using bincount, for each node, multiply w_i * sum obtained in last step
 
-    iw = 1./(w + eps)
-    pos = pairs[:,2] == 1
-    gw += (len(pairs) - pos.sum())/wsum
+    #next term is prod(U_i ^ D_i)
+    iw = 1./(w + eps) #coming from log w_i
+    pos = pairs[:,2] == 1 
+    gw += (len(pairs) - pos.sum())/wsum #coming from derivative of L in deonominator
     prow = row[pos]
     pcol = col[pos]
-    gw += np.bincount(prow, weights=iw[prow], minlength=N)
+    gw += np.bincount(prow, weights=iw[prow], minlength=N) #only for 'p'resent edges, same for next one
     gw += np.bincount(pcol, weights=iw[pcol], minlength=N)
-    gw *= float(0.5*N*(N-1))/float(len(pairs))
+    gw *= float(0.5*N*(N-1))/float(len(pairs)) #scaling
 
-    return gw
+    return gw #gradient matrix
