@@ -23,11 +23,13 @@ def get_pairs(graph):
 
     #enumerate all edges
     pairs = np.array(list(combinations(range(N), 2)))
-    pairs = np.column_stack((pairs, np.zeros(len(pairs), dtype=int)))
+    pairs = np.column_stack((pairs, np.zeros(len(pairs), dtype=int))) 
+    #^stacks a 0 with every possible edge pair formed in last step -- this gives 'connected?' info
+
     # fill in edges
     for (r, c) in zip(row, col):
         k = r*(2*N-r-1)/2-r + c-1
-        pairs[k, 2] = 1
+        pairs[k, 2] = 1 #connect
 
     return pairs
 
@@ -44,16 +46,22 @@ def get_degree(graph):
 
 def log_likel(pairs, w):
     if w.ndim == 1:
-        w = w.reshape(1,-1)
-    [S,N] = w.shape
-    u = w/np.sqrt(w.sum(axis=1).reshape(-1,1))
-    r = np.einsum('ij,ik->ijk', u, u)
-    ll = -log(1 + r[:,pairs[:,0],pairs[:,1]]).sum(axis=1)
-    pos = pairs[:,2] == 1
-    ll += log(r[:,pairs[pos,0],pairs[pos,1]]).sum(axis=1)
-    return ll.mean()
+        w = w.reshape(1,-1) #W is a column vector
+    [S,N] = w.shape #S samples of N w params
+    u = w/np.sqrt(w.sum(axis=1).reshape(-1,1)) #normalize
+    r = np.einsum('ij,ik->ijk', u, u) 
+    #^^ for each row (sample of N latents), perform a U_i * U_j operation; This gives another 
+    #dimension for each sample 'i'. Notation: for each row i, in both matrices, perform i_j * i_k, and index first by i, then j,k
+    #so, no summation, only product. This is supposed to be an efficient operation internally!
 
-def log_likel_grad(pairs, w):
+    ll = -log(1 + r[:,pairs[:,0],pairs[:,1]]).sum(axis=1) #log_sum G(r)^-1 for all possible edges
+    pos = pairs[:,2] == 1
+    ll += log(r[:,pairs[pos,0],pairs[pos,1]]).sum(axis=1) #log_sum r_ij^x_ij -- only present edges
+    #ll now has log likelihood for S samples
+
+    return ll.mean() #sample mean
+
+def log_likel_grad(pairs, w): #grad of LL wrt w latent variable
     N = len(w)
     wsum = w.sum()
 

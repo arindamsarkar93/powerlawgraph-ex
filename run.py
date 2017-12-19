@@ -26,7 +26,7 @@ def sgvb(model, train, test, batch_size, n_steps, eval_freq, estim_elbo,
         model.step(dlldw)
         if (t+1)%eval_freq == 0:
             line = 'step %d/%d (%.3f secs), ' % (t+1, n_steps, time.time()-start)
-            w = model.sample_q(S=25)
+            w = model.sample_q(S=25) #No. of samples of latent parameter w
             if estim_elbo:
                 elbo = 0.
                 n_train = len(train)
