@@ -20,22 +20,25 @@ class GammaGamma(object):
         self.theta = np.random.gamma(1.,1.) if theta is None else theta
         self.var[-1] = self.sp.inv(self.theta)
 
+    #reparametrization trick
     def reparam(self, debug=False):
         a = self.a
         b = self.b
 
         z = 0.2*np.ones(self.N) if debug else \
-                1e-15 + np.random.rand(self.N)*(1.-1e-15)
+                1e-15 + np.random.rand(self.N)*(1.-1e-15) #by default, std normal
         w = np.zeros(self.N)
         dwda = np.zeros(self.N)
 
-        small = a < 1000
+        #approximation for shape param gradient
+        small = a < 1000 
+        #idea is understandable, math still hazy
         if np.any(small):
             a_ = a[small]
             b_ = b[small]
             z_ = z[small]
             # reparam y ~ gamma(a+1, b)
-            y_ = gamma.ppf(z_, a_+1, scale=b_**-1)
+            y_ = gamma.ppf(z_, a_+1, scale=b_**-1) #gamma param -- rate is 1/scale
             dyda_ = (gamma.ppf(z_, a_+1+1e-5, scale=b_**-1)-y_)/1e-5
 
             u_ = 0.3*np.ones(a_.shape) if debug else \
@@ -46,13 +49,14 @@ class GammaGamma(object):
 
         large = np.logical_not(small)
         if np.any(large):
+            #okay
             a_ = a[large]
             b_ = b[large]
             sqa_ = np.sqrt(a_)
             z_ = 0.3*np.ones(a_.shape) if debug else np.random.normal(size=a_.shape)
             w[large] = (a_ + sqa_*z_)/b_
             dwda[large] = (1.+0.5*z_/sqa_)/b_
-        dwdb = -w/b
+        dwdb = -w/b 
         w[w<1e-40] = 1e-40
 
         self.w = w
@@ -75,8 +79,9 @@ class GammaGamma(object):
         return lq.sum(lq.ndim-1).mean()
 
     def sample_q(self, S=1):
-        return np.random.gamma(self.a, scale=self.b**-1, size=(S,self.N))
+        return np.random.gamma(self.a, scale=self.b**-1, size=(S,self.N)) #scale = 1/rate
 
+    #details yet to figure out
     def step(self, dlldw):
         w = self.w
         a = self.a

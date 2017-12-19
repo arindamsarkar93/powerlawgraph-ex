@@ -23,8 +23,8 @@ class Softplus(object):
     def __call__(self, x):
         return np.logaddexp(0, x)
 
-    def inv(self, y):
+    def inv(self, y):   
         return y + log(1. - exp(-y))
 
-    def jacobian(self, x):
+    def jacobian(self, x): #how?? -- not clears
         return 1 - exp(-x)

@@ -5,6 +5,8 @@ from scipy.integrate import quad
 # bfry model
 # p(w) = tBFRY(alpha, C=N**beta)
 # q(w) = rGamma(a, b, C=N**beta)
+#C is C_n, the truncation limit
+
 class tBFRYrGamma(GammaGamma):
     def __init__(self, N, lr=0.1, alpha=None, beta=1.0):
         self.N = N
@@ -21,7 +23,7 @@ class tBFRYrGamma(GammaGamma):
 
         self.alpha = np.random.beta(1.,1.) if alpha is None else alpha #beta(1,1) is unif(0,1)
         self.alpha = min(self.alpha, alpha_ub)
-        self.var[-1] = self.sig.inv(self.alpha) #logit fn
+        self.var[-1] = self.sig.inv(self.alpha) #logit fn -- but why this step?
 
     def reparam(self, debug=False):
         super(tBFRYrGamma, self).reparam(debug=debug)
@@ -43,6 +45,7 @@ class tBFRYrGamma(GammaGamma):
             if tol > 10:
                 w[to_resample] = C
                 break
+            #this is how you sample a BFRY rv
             w[to_resample] = np.random.gamma(1.-alpha, 1., num_to_resample) / \
                     np.random.beta(alpha, 1., num_to_resample)
             to_resample = w > C
@@ -58,24 +61,25 @@ class tBFRYrGamma(GammaGamma):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             f = lambda x: (x**(-alpha-1))*(1-exp(-x))
-            Z, _ = quad(f, 0.0, C)
-        lp = (-alpha-1)*log(w) + log(1 - exp(-w)) - log(Z)
-        return lp.sum(lp.ndim-1).mean()
+            Z, _ = quad(f, 0.0, C) #proportionality constant -- integration[f](0,C_n)
+        lp = (-alpha-1)*log(w) + log(1 - exp(-w)) - log(Z) #just logify p(w) to get this form
+        return lp.sum(lp.ndim-1).mean() #return mean
 
     def sample_q(self, S=1):
-        w = super(tBFRYrGamma, self).sample_q(S=S)
-        w[w>=self.C] = self.C
+        w = super(tBFRYrGamma, self).sample_q(S=S) 
+        w[w>=self.C] = self.C #truncation
         return w
 
     def log_q(self, w):
         a = np.tile(self.a, (w.shape[0],1)) if w.ndim==2 else self.a
         b = np.tile(self.b, (w.shape[0],1)) if w.ndim==2 else self.b
         C = self.C
-        lq = a*log(b) + (a-1)*log(w) - b*w - gammaln(a)
-        over = w >= C
-        lq[over] = log(1.-gammainc(a[over], b[over]*C))
+        lq = a*log(b) + (a-1)*log(w) - b*w - gammaln(a) #log of gamma
+        over = w >= C 
+        lq[over] = log(1.-gammainc(a[over], b[over]*C)) #????????
         return lq.sum(lq.ndim-1).mean()
 
+    #details yet to figure out
     def step(self, dlldw):
         w = self.w
         a = self.a
