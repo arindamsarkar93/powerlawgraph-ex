@@ -95,7 +95,7 @@ generated quantities{
 """;
 
 #Inference
-fit = pystan.stan(model_code = stan_code, data = data, iter=1000, chains = 4, n_jobs=2, verbose = False);
+fit = pystan.stan(model_code = stan_code, data = data, iter=1000, chains = 4, n_jobs=1, verbose = False);
 
 log_lik = fit.extract('log_lik')['log_lik'];
 
