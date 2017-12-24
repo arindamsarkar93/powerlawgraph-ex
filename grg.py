@@ -75,7 +75,7 @@ def log_likel_grad(pairs, w): #grad of LL wrt w latent variable
 
     gw -= np.bincount(row, weights=w[col]*denom, minlength=N)
     gw -= np.bincount(col, weights=w[row]*denom, minlength=N)
-    #using bincount, for each node, multiply w_i * sum obtained in last step
+    #using bincount, for each node, multiply w_j's * sum obtained in last step
 
     #next term is prod(U_i ^ D_i)
     iw = 1./(w + eps) #coming from log w_i

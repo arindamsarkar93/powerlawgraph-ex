@@ -26,5 +26,5 @@ class Softplus(object):
     def inv(self, y):   
         return y + log(1. - exp(-y))
 
-    def jacobian(self, x): #how?? -- not clears
+    def jacobian(self, x): #how?? -- not clear
         return 1 - exp(-x)
