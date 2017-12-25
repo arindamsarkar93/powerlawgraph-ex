@@ -155,6 +155,7 @@ def run_inference(tr_split=0.8):
 	ts_ll = fit['mean_pars'][-1];
 
 	print "Inference Results: ";
+	print "alpha: ", fit['mean_pars'][0];
 	print "Train log-likelihood:", tr_ll;
 	print "Test log-likelihood:", ts_ll;
 
