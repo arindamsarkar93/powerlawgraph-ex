@@ -47,6 +47,7 @@ functions{
 
 	//lpdf of generalized random graph as outlined in the paper
 	real grg_lpdf(matrix X, matrix r, int N){
+		real eps = 1e-20; //small constant to avoid log(0)
 		real log_Gr = 0.0;
 		real log_x_r = 0.0;
 		real temp = r[1,1];
@@ -54,7 +55,7 @@ functions{
 		for(i in 1:N){
 			for(j in 1:N){
 				log_Gr += log(1+r[i,j]);
-				log_x_r += X[i,j] * log(r[i,j]);
+				log_x_r += X[i,j] * log(r[i,j] + eps);
 			}
 		}
 
@@ -71,13 +72,13 @@ data{
 }
 
 parameters{
-	real<lower=0, upper=0.9999> alpha; //parameter of distribution
+	real<lower=0> alpha; //parameter of distribution
 	vector<lower=0>[N] w; //scalar embedding of graph rep. by X
 }
 
 transformed parameters{
 	vector[N] u;
-	matrix[N,N] r;
+	matrix<lower=0>[N,N] r;
 	real L;
 
 	L = sum(w);
