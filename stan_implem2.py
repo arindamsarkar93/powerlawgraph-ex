@@ -47,7 +47,6 @@ functions{
 
 	//lpdf of generalized random graph as outlined in the paper
 	real grg_lpdf(matrix X, matrix r, int N){
-		real eps = 1e-20; //small constant to avoid log(0)
 		real log_Gr = 0.0;
 		real log_x_r = 0.0;
 		real temp = r[1,1];
@@ -55,7 +54,7 @@ functions{
 		for(i in 1:N){
 			for(j in 1:N){
 				log_Gr += log(1+r[i,j]);
-				log_x_r += X[i,j] * log(r[i,j] + eps);
+				log_x_r += X[i,j] * log(r[i,j]);
 			}
 		}
 
