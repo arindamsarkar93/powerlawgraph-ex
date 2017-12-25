@@ -49,7 +49,6 @@ functions{
 	real grg_lpdf(matrix X, matrix r, int N){
 		real log_Gr = 0.0;
 		real log_x_r = 0.0;
-		real temp = r[1,1];
 
 		for(i in 1:N){
 			for(j in 1:N){
@@ -71,7 +70,7 @@ data{
 }
 
 parameters{
-	real<lower=0, upper=1> alpha; //parameter of distribution
+	real<lower=0.001, upper=0.99> alpha; //parameter of distribution
 	vector<lower=0>[N] w; //scalar embedding of graph rep. by X
 }
 
