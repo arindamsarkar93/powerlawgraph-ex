@@ -4,7 +4,7 @@ import numpy as np
 import statsmodels.api as sm
 from scipy.stats import uniform, norm
 import pickle
-from math import ceil
+from math import ceil, floor
 
 import pystan
 from pystan import StanModel
@@ -25,7 +25,7 @@ col = g['col']
 #row-column makes an edge
 
 #train-test split
-E = size(row);
+E = len(row);
 
 E_tr = math.floor(0.8*E);
 E_ts = E - E_tr;
