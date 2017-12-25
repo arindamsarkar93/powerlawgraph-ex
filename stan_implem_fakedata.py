@@ -2,11 +2,13 @@
 from __future__ import division
 import numpy as np
 import statsmodels.api as sm
-import pystan
 from scipy.stats import uniform, norm
 import pickle
 
-N = 10;
+import pystan
+from pystan import StanModel
+
+N = 100;
 
 data = {};
 data['N'] = N;
@@ -97,9 +99,20 @@ generated quantities{
 """;
 
 #Inference
-fit = pystan.stan(model_code = stan_code, data = data, iter=1000, chains = 4, n_jobs=1, verbose = False);
+#fit = pystan.stan(model_code = stan_code, data = data, iter=1000, chains = 4, n_jobs=1, verbose = False);
 
-log_lik = fit.extract('log_lik')['log_lik'];
+#log_lik = fit.extract('log_lik')['log_lik'];
 
-print "log-likelihood:", np.mean(log_lik);
+m = StanModel(model_code = stan_code);
+fit = m.vb(data = data);
+#print fit.keys();
+
+print "log-likelihood:", fit['mean_pars'][-1];
+
+#log_lik = functions['log_lik'];
+#print "log-likelihood:", np.mean(log_lik);
+
+#print(fit['args']['sample_file'])
+
+#print "log-likelihood:", np.mean(log_lik);
 
