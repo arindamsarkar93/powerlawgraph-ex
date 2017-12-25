@@ -8,7 +8,7 @@ import pickle
 import pystan
 from pystan import StanModel
 
-N = 100;
+N = 1000;
 
 data = {};
 data['N'] = N;
