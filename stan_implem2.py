@@ -163,6 +163,9 @@ def run_inference(tr_split=0.8):
 #########-----------------------END-----------------------------#########
 
 num_rounds = 10;
+tr_ll = 0;
+ts_ll = 0;
+
 #run multiple inference rounds--and average over runs
 for i in range(num_rounds):
 	res_ll = run_inference(0.8); #returns [tr_likelihood, ts_likelihood]
