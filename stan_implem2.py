@@ -71,7 +71,7 @@ data{
 }
 
 parameters{
-	real<lower=0> alpha; //parameter of distribution
+	real<lower=0, upper=1> alpha; //parameter of distribution
 	vector<lower=0>[N] w; //scalar embedding of graph rep. by X
 }
 
