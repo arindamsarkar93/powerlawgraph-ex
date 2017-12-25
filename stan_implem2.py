@@ -4,6 +4,7 @@ import numpy as np
 import statsmodels.api as sm
 from scipy.stats import uniform, norm
 import pickle
+from math import ceil
 
 import pystan
 from pystan import StanModel
@@ -23,15 +24,31 @@ col = g['col']
 
 #row-column makes an edge
 
+#train-test split
+E = size(row);
+
+E_tr = math.floor(0.8*E);
+E_ts = E - E_tr;
+
+idx = range(E);
+tr_idx = set(np.random.choice(idx,size = E_tr, replace = False));
+
 data = {};
 data['N'] = N;
-X = np.zeros([N,N]); #adjacency matrix
+X_tr = np.zeros([N,N]); #adjacency matrix train
+X_ts = np.zeros([N,N]); #adjacency matrix test
 
 for (r,c) in zip(row,col):
-	X[r][c] = 1;
-	X[c][r] = 1;
+	if(curr_idx in tr_idx):
+		X_tr[r][c]=1;
+		X_tr[c][r]=1;
 
-data['X'] = X;
+	else:
+		X_ts[r][c] = 1;
+		X_ts[c][r] = 1;
+
+data['X_tr'] = X_tr;
+data['X_ts'] = X_ts;
 
 beta = 1.0;
 C_n = N**beta;
@@ -79,7 +96,8 @@ functions{
 
 data{
 	int<lower=0> N;
-	matrix[N,N] X;
+	matrix[N,N] X_tr;
+	matrix[N,N] X_ts;
 	real C_n;
 	real beta;
 }
@@ -105,14 +123,16 @@ model{
 		w[i] ~ tBFRY(alpha,C_n);
 	}
 
-	X ~ grg(r,N);
+	X_tr ~ grg(r,N);
 }
 
 generated quantities{
-	real log_lik;
+	real tr_log_lik;
+	real ts_log_lik;
 	//likelihood eval
 
-	log_lik = grg_lpdf(X|r,N);
+	tr_log_lik = grg_lpdf(X_tr|r,N);
+	ts_log_lik = grg_lpdf(X_ts|r,N);
 }
 """;
 
@@ -125,7 +145,8 @@ m = StanModel(model_code = stan_code);
 fit = m.vb(data = data);
 #print fit.keys();
 
-print "log-likelihood:", fit['mean_pars'][-1];
+print "Train log-likelihood:", fit['mean_pars'][-2];
+print "Test log-likelihood:", fit['mean_pars'][-1];
 
 #log_lik = functions['log_lik'];
 #print "log-likelihood:", np.mean(log_lik);
