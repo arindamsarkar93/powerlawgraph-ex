@@ -25,9 +25,9 @@ col = g['col']
 #row-column makes an edge
 
 #train-test split
-E = len(row);
+E = int(len(row));
 
-E_tr = math.floor(0.8*E);
+E_tr = int(floor(0.8*E));
 E_ts = E - E_tr;
 
 idx = range(E);
@@ -38,6 +38,8 @@ data['N'] = N;
 X_tr = np.zeros([N,N]); #adjacency matrix train
 X_ts = np.zeros([N,N]); #adjacency matrix test
 
+curr_idx = 0;
+
 for (r,c) in zip(row,col):
 	if(curr_idx in tr_idx):
 		X_tr[r][c]=1;
@@ -46,6 +48,8 @@ for (r,c) in zip(row,col):
 	else:
 		X_ts[r][c] = 1;
 		X_ts[c][r] = 1;
+
+	curr_idx = curr_idx + 1;
 
 data['X_tr'] = X_tr;
 data['X_ts'] = X_ts;
