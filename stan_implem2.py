@@ -24,42 +24,6 @@ col = g['col']
 
 #row-column makes an edge
 
-#train-test split
-E = int(len(row));
-
-E_tr = int(floor(0.8*E));
-E_ts = E - E_tr;
-
-idx = range(E);
-tr_idx = set(np.random.choice(idx,size = E_tr, replace = False));
-
-data = {};
-data['N'] = N;
-X_tr = np.zeros([N,N]); #adjacency matrix train
-X_ts = np.zeros([N,N]); #adjacency matrix test
-
-curr_idx = 0;
-
-for (r,c) in zip(row,col):
-	if(curr_idx in tr_idx):
-		X_tr[r][c]=1;
-		X_tr[c][r]=1;
-
-	else:
-		X_ts[r][c] = 1;
-		X_ts[c][r] = 1;
-
-	curr_idx = curr_idx + 1;
-
-data['X_tr'] = X_tr;
-data['X_ts'] = X_ts;
-
-beta = 1.0;
-C_n = N**beta;
-
-data['beta'] = beta;
-data['C_n'] = C_n;
-
 #model
 stan_code="""
 functions{
@@ -146,11 +110,69 @@ generated quantities{
 #log_lik = fit.extract('log_lik')['log_lik'];
 
 m = StanModel(model_code = stan_code);
-fit = m.vb(data = data);
-#print fit.keys();
 
-print "Train log-likelihood:", fit['mean_pars'][-2];
-print "Test log-likelihood:", fit['mean_pars'][-1];
+#########-----------------------START-----------------------------#########
+def run_inference(tr_split=0.8):
+	#train-test split
+	E = int(len(row));
+
+	E_tr = int(floor(tr_split*E));
+	E_ts = E - E_tr;
+
+	idx = range(E);
+	tr_idx = set(np.random.choice(idx,size = E_tr, replace = False));
+
+	data = {};
+	data['N'] = N;
+	X_tr = np.zeros([N,N]); #adjacency matrix train
+	X_ts = np.zeros([N,N]); #adjacency matrix test
+
+	curr_idx = 0;
+
+	for (r,c) in zip(row,col):
+		if(curr_idx in tr_idx):
+			X_tr[r][c]=1;
+			X_tr[c][r]=1;
+
+		else:
+			X_ts[r][c] = 1;
+			X_ts[c][r] = 1;
+
+		curr_idx = curr_idx + 1;
+
+	data['X_tr'] = X_tr;
+	data['X_ts'] = X_ts;
+
+	beta = 1.0;
+	C_n = N**beta;
+
+	data['beta'] = beta;
+	data['C_n'] = C_n;
+
+	fit = m.vb(data = data);
+	#print fit.keys();
+
+	tr_ll = fit['mean_pars'][-2];
+	ts_ll = fit['mean_pars'][-1];
+
+	print "Inference Results: ";
+	print "Train log-likelihood:", tr_ll;
+	print "Test log-likelihood:", ts_ll;
+
+	return [tr_ll, ts_ll];
+#########-----------------------END-----------------------------#########
+
+num_rounds = 10;
+#run multiple inference rounds--and average over runs
+for i in range(num_rounds):
+	res_ll = run_inference(0.8); #returns [tr_likelihood, ts_likelihood]
+	tr_ll += res_ll[0];
+	ts_ll += res_ll[1];
+
+
+print "Average log-likelihoods:";
+print "Train: ", tr_ll/num_rounds;
+print "Test: ", ts_ll/num_rounds;
 
 #log_lik = functions['log_lik'];
 #print "log-likelihood:", np.mean(log_lik);
