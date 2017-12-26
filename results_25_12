@@ -429,3 +429,20 @@ Test log-likelihood: -8090.91645661
 Average log-likelihoods:
 Train:  -13413.3573328
 Test:  -8046.37523039
+
+
+-------------------------
+Issue:
+
+Begin stochastic gradient ascent.
+  iter       ELBO   delta_ELBO_mean   delta_ELBO_med   notes 
+Traceback (most recent call last):
+  File "stan_implem2.py", line 171, in <module>
+    res_ll = run_inference(0.8); #returns [tr_likelihood, ts_likelihood]
+  File "stan_implem2.py", line 151, in run_inference
+    fit = m.vb(data = data);
+  File "/usr/local/lib/python2.7/dist-packages/pystan/model.py", line 889, in vb
+    ret, sample = fit._call_sampler(stan_args)
+  File "stanfit4anon_model_f5a93b703270e9eab91075e29a254047_6187038408425843704.pyx", line 876, in stanfit4anon_model_f5a93b703270e9eab91075e29a254047_6187038408425843704.StanFit4Model._call_sampler
+  File "stanfit4anon_model_f5a93b703270e9eab91075e29a254047_6187038408425843704.pyx", line 401, in stanfit4anon_model_f5a93b703270e9eab91075e29a254047_6187038408425843704._call_sampler
+RuntimeError: stan::variational::normal_meanfield::calc_grad: The number of dropped evaluations has reached its maximum amount (10). Your model may be either severely ill-conditioned or misspecified.
