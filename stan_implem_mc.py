@@ -148,7 +148,6 @@ def run_inference(tr_split=0.8):
 	data['beta'] = beta;
 	data['C_n'] = C_n;
 
-	fit = m.vb(data = data);
 	#print fit.keys();
 
 	#Inference
