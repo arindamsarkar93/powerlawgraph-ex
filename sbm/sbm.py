@@ -8,7 +8,7 @@ import numpy as np
 
 #Generate data
 #------------------START-------------------
-N = 50;
+N = 200;
 K = 5; #no. of clusters
 alpha = 0.2 * np.ones(K);
 
