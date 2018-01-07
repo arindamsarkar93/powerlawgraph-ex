@@ -2,3 +2,5 @@
 *.pkl
 *.log
 *.Rhistory
+*.model
+*.swp

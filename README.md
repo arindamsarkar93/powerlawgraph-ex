@@ -1,8 +1,8 @@
 # powerlawgraph-ex
-Extensions of powerlawgraph by Juho et al
+This repo serves multiple purposes:
+..* Extending the paper "Bayesian inference on random simple graphs with power-law degree distributions" - Juho Lee et al.
 
-# powerlawgraph - originally by Lee et al
-Implementation for the paper "Bayesian inference on random simple graphs with power-law degree distributions" - Juho Lee
+..* Experiment with other lines of work around power law behavior in Network graphs
 
 #Trials on Stan implementation underway
 
