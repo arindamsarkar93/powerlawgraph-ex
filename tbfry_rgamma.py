@@ -26,7 +26,7 @@ class tBFRYrGamma(GammaGamma):
         self.var[-1] = self.sig.inv(self.alpha) #logit fn -- but why this step?
 
     def reparam(self, debug=False):
-        super(tBFRYrGamma, self).reparam(debug=debug)
+        super(tBFRYrGamma, self).reparam(debug=debug) #see gamma_gamma
         over = self.w >= self.C
         self.w[over] = self.C
         self.dwda[over] = 0.
@@ -102,8 +102,8 @@ class tBFRYrGamma(GammaGamma):
         dlqda[over] = (p-gammainc(a_+1e-5, b_*C))/1e-5/(1.-p+eps)
         dlqdb[over] = -exp(a_*log(C) + (a_-1)*log(b_) - b_*C - gammaln(a_))/(1.-p+eps)
 
-        dLda = dljdw*dwda - dlqda
-        dLdb = dljdw*dwdb - dlqdb
+        dLda = dljdw*dwda - dlqda #chain rule, ok
+        dLdb = dljdw*dwdb - dlqdb #same^^
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
@@ -113,6 +113,7 @@ class tBFRYrGamma(GammaGamma):
             gZ, _ = quad(f, 0.0, C)
         dLdalpha = -N*gZ/Z - log(w).sum() #grad step for alpha
 
+        #chain rule applied as dLda is in terms of softplus
         grad = np.append(np.concatenate(
             [dLda*self.sp.jacobian(a), dLdb*self.sp.jacobian(b)]),
             dLdalpha*self.sig.jacobian(alpha))
