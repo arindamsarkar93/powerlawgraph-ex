@@ -73,7 +73,7 @@ def load_stan_model( model_name ):
     return stan_model
 #-------------------------------------------------------------------------------
 
-m = load_stan_model("sbm_zpred");
+m = load_stan_model("sbm_vect");
 fit = m.vb(data = data);
 
 #phi_inf = fit['mean_pars'][0];
