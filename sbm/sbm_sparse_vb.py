@@ -8,7 +8,7 @@ import numpy as np
 
 #Generate data
 #------------------START-------------------
-N = 300;
+N = 500;
 K = 5; #no. of clusters
 alpha = 0.2 * np.ones(K);
 
@@ -23,18 +23,27 @@ clusters = np.random.choice(K, size = N, replace = True);
 #sample data
 graph = np.zeros([N,N]); #adjacency matrix rep.
 
+#sparse?
+sparsity = 0.2;
+
 for i in range(N):
 	graph[i][i] = 1;
 	for j in range(i+1,N):
 		cluster_i = clusters[i];
 		cluster_j = clusters[j];		
-		conn = np.random.binomial(n=1,p=phi[cluster_i][cluster_j]);	
+		conn = np.random.binomial(n=1,p=phi[cluster_i][cluster_j] * sparsity);	
 
 		#symmetrical connections
 		graph[i][j] = conn;
 		graph[j][i] = conn;
 
 #-------------------END-------------------
+
+edges = np.sum(graph);
+
+print "No. of vertices: ", N;
+print "No. of edges: ", edges;
+print "Sparsity: ", edges*2/(N*(N-1));
 
 pi_act = [list(clusters).count(x)/N for x in range(K)];
 phi_act = phi;
@@ -66,7 +75,7 @@ def load_stan_model( model_name ):
 #-------------------------------------------------------------------------------
 
 m = load_stan_model("sbm_vect");
-fit = m.vb(data = data, output_samples=100, grad_samples = 10, algorithm = 'fullrank');
+fit = m.vb(data = data, output_samples=100, elbo_samples=200, grad_samples = 10, algorithm = 'fullrank');
 
 #phi_inf = fit['mean_pars'][0];
 #pi_inf = fit['mean_pars'][1];

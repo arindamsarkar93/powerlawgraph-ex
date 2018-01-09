@@ -8,7 +8,7 @@ import numpy as np
 
 #Generate data
 #------------------START-------------------
-N = 200;
+N = 10;
 K = 5; #no. of clusters
 alpha = 0.2 * np.ones(K);
 
@@ -32,18 +32,27 @@ clusters = np.random.choice(K, size = N, replace = True, p = cluster_pref);
 #sample data
 graph = np.zeros([N,N]); #adjacency matrix rep.
 
+#sparse?
+sparsity = 0.2;
+
 for i in range(N):
 	graph[i][i] = 1;
 	for j in range(i+1,N):
 		cluster_i = clusters[i];
 		cluster_j = clusters[j];		
-		conn = np.random.binomial(n=1,p=phi[cluster_i][cluster_j]);	
+		conn = np.random.binomial(n=1,p=phi[cluster_i][cluster_j] * sparsity);	
 
 		#symmetrical connections
 		graph[i][j] = conn;
 		graph[j][i] = conn;
 
 #-------------------END-------------------
+
+edges = np.sum(graph);
+
+print "No. of vertices: ", N;
+print "No. of edges: ", edges;
+print "Sparsity: ", edges*2/(N*(N-1));
 
 pi_act = [list(clusters).count(x)/N for x in range(K)];
 phi_act = phi;
@@ -74,8 +83,8 @@ def load_stan_model( model_name ):
     return stan_model
 #-------------------------------------------------------------------------------
 
-m = load_stan_model("sbm_zpred");
-fit = m.sampling(data = data, chains = 4, n_jobs=-1, verbose = False);
+m = load_stan_model("sbm");
+fit = m.sampling(data = data, chains = 4, n_jobs=-1, algorithm="HMC", verbose = False);
 
 phi_inf = np.mean(fit.extract('phi')['phi'], axis=0);
 pi_inf = np.mean(fit.extract('pi')['pi'], axis=	0);
