@@ -8,7 +8,7 @@ import numpy as np
 
 #Generate data
 #------------------START-------------------
-N = 100;
+N = 1000;
 K = 5; #no. of clusters
 alpha = 0.2 * np.ones(K);
 
@@ -16,17 +16,18 @@ alpha = 0.2 * np.ones(K);
 np.random.seed(42); #reproducible results
 
 #fixed block structure
-phi = [[0.5, 0.7, 0.3, 0.2, 0.8],
-       [0.7, 0.5, 0.8, 0.1, 0.2],
-       [0.3, 0.8, 0.5, 0.1, 0.1],
-       [0.2, 0.1, 0.1, 0.5, 0.1],
+phi = [[0.5, 0.7, 0.8, 0.9, 0.8],
+       [0.7, 0.5, 0.2, 0.1, 0.2],
+       [0.8, 0.2, 0.5, 0.1, 0.1],
+       [0.9, 0.1, 0.1, 0.5, 0.1],
        [0.8, 0.2, 0.1, 0.1, 0.5]];
 
 #phi = np.random.rand(K,K);
 #phi = np.tril(phi) + np.tril(phi, -1).T; #symmetric
 
 #cluster membership
-clusters = np.random.choice(K, size = N, replace = True);
+cluster_pref = [0.75, 0.20, 0, 0, 0.05];
+clusters = np.random.choice(K, size = N, replace = True, p = cluster_pref);
 
 #sample data
 graph = np.zeros([N,N]); #adjacency matrix rep.
@@ -73,7 +74,7 @@ def load_stan_model( model_name ):
     return stan_model
 #-------------------------------------------------------------------------------
 
-m = load_stan_model("sbm_vect");
+m = load_stan_model("sbm_vect2");
 fit = m.vb(data = data);
 
 #phi_inf = fit['mean_pars'][0];
