@@ -8,7 +8,7 @@ import numpy as np
 
 #Generate data
 #------------------START-------------------
-N = 10;
+N = 500;
 K = 5; #no. of clusters
 alpha = 0.2 * np.ones(K);
 
@@ -33,7 +33,7 @@ clusters = np.random.choice(K, size = N, replace = True, p = cluster_pref);
 graph = np.zeros([N,N]); #adjacency matrix rep.
 
 #sparse?
-sparsity = 0.2;
+sparsity = 1;
 
 for i in range(N):
 	graph[i][i] = 1;
