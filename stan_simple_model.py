@@ -43,7 +43,7 @@ transformed parameters{
 	
 	for(i in 1:N){
 		for(j in 1:N){
-			p[i][j] = inv_logit(z[i]' * z[j]);
+			p[i][j] = 1/(1 + exp(-z[i]' * z[j]));
 		}
 	}
 }
