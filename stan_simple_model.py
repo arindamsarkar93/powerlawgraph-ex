@@ -35,13 +35,17 @@ data{
 }
 
 parameters{
-	matrix[K,N] z; //node embeddings
+	vector[K] z[N]; //node embeddings
 }
 
 transformed parameters{
 	matrix[N,N] p; //conn. prob.
 	
-	p = inv_logit(z * z');
+	for(i in 1:N){
+		for(j in 1:N){
+			p[i][j] = inv_logit(z[i]' * z[j]);
+		}
+	}
 }
 
 model{
