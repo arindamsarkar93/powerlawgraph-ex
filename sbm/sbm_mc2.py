@@ -48,7 +48,7 @@ for i in range(N):
 
 #-------------------END-------------------
 
-edges = np.sum(graph);
+edges = np.sum(graph)/2;
 
 print "No. of vertices: ", N;
 print "No. of edges: ", edges;
