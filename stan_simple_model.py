@@ -50,7 +50,9 @@ transformed parameters{
 
 model{
 	for(i in 1:N){
-		z[i] ~ normal(0,1);
+		for(j in 1:N){
+			z[i] ~ normal(0,1);
+		}
 	}
 
 	for(i in 1:N){
