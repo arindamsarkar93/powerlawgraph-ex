@@ -1,4 +1,4 @@
-#modified erdos-reyni model
+#erdos-reyni model -- really bad
 from __future__ import division
 import numpy as np
 import statsmodels.api as sm
