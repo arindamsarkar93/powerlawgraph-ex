@@ -41,7 +41,7 @@ parameters{
 model{
 	for(i in 1:N){
 		for(j in 1:N){
-			p[i][j] ~ beta(0,1);
+			p[i][j] ~ beta(1,1);
 		}
 	}
 
