@@ -52,7 +52,7 @@ clusters = np.random.choice(K, size = N, replace = True);#,p = cluster_pref);
 graph = np.zeros([N,N]); #adjacency matrix rep.
 
 #sparse?
-sparsity = 1;
+sparsity = 0.5;
 
 for i in range(N):
 	graph[i][i] = 1;
@@ -113,10 +113,10 @@ cnt = N*N;
 correct = np.sum(X_data == X_pred);
 
 plt.subplot(211);
-plt.imshow(phi, cmap='Greys');
+plt.imshow(X_data, cmap='Greys');
 
 plt.subplot(212)
-plt.imshow(pi_pred, cmap='Greys');
+plt.imshow(X_pred, cmap='Greys');
 plt.show();
 
 print("Correctly predicted: ", correct);

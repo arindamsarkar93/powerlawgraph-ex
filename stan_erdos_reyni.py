@@ -1,4 +1,4 @@
-
+#modified erdos-reyni model
 from __future__ import division
 import numpy as np
 import statsmodels.api as sm
@@ -35,22 +35,14 @@ data{
 }
 
 parameters{
-	vector[K] z[N]; //node embeddings
-}
-
-transformed parameters{
 	matrix[N,N] p; //conn. prob.
-	
-	for(i in 1:N){
-		for(j in 1:N){
-			p[i][j] = 1/(1 + exp(-z[i]' * z[j]));
-		}
-	}
 }
 
 model{
 	for(i in 1:N){
-		z[i] ~ normal(0,1);
+		for(j in 1:N){
+			p[i][j] ~ beta(0,1);
+		}
 	}
 
 	for(i in 1:N){
@@ -141,7 +133,7 @@ m = StanModel(model_code = stan_code);
 #embedding size:
 K = 10;
 
-num_rounds = 10;
+num_rounds = 2;
 tr_ll = 0;
 ts_ll = 0;
 
@@ -162,4 +154,3 @@ print "Test: ", ts_ll/num_rounds;
 #print(fit['args']['sample_file'])
 
 #print "log-likelihood:", np.mean(log_lik);
-
