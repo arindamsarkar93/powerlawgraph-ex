@@ -35,7 +35,7 @@ data{
 }
 
 parameters{
-	matrix[N,N] p; //conn. prob.
+	matrix<lower=0, upper=1>[N,N] p; //conn. prob.
 }
 
 model{
