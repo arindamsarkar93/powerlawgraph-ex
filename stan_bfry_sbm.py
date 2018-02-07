@@ -76,7 +76,7 @@ data{
 transformed data{
   real a;
   real b;
-  a = 1.0;
+  a = 5.0;
   b = 1.0;
 }
 
@@ -103,9 +103,9 @@ model{
 
 	for(i in 1:K){
 	    for(j in 1:K){
-	      phi[i][j] ~ beta(a,b); //prior on block matrix entries -- change to gamma?
+	      phi[i][j] ~ gamma(a,b); //prior on block matrix entries -- change to gamma?
 	    }
-	  }
+  	}
 
 	pi ~ dirichlet(alphaDir); //mixture distribution
 
