@@ -83,44 +83,13 @@ parameters{
 transformed parameters{
 	vector[N] u;
 	matrix<lower=0>[N,N] r;
-	matrix[N,N] A;
 	real L;
-	int clusters_inf[N];
 
 	L = sum(w);
 	u = w/sqrt(L);
 
 	r = u * u'; //uu^T
-
-	//clusters
-
-	for(i in 1:N){
-		clusters_inf[i] = 1; //initialization
-		//prob. -- node i has cluster z_i
-		for(z_i in 1:K){
-		  log_zprob[i][z_i] = log(pi[z_i]);
-
-		  for(j in 1:N){
-
-		    for(z_j in 1:K){
-		      lps[z_j] = log(pi[z_j]) + bernoulli_lpmf(graph[i][j] | phi[z_i][z_j]);
-		    }
-
-		    log_zprob[i][z_i] += log_sum_exp(lps);
-		  }
-
-		  if(log_zprob[i][z_i] > log_zprob[i][clusters_inf[i]]){
-		    clusters_inf[i] = z_i;
-		  }
-		}
-	}
-
-	for(i in 1:N){
-		for(j in 1:N){
-			A[i][j] = phi[clusters_inf[i]][clusters_inf[j]];
-			r[i][j] = A[i][j] * r[i][j];
-		}
-	}
+	r = r * (pi' * phi * pi); //marginalize over clusters
 }
 
 model{
