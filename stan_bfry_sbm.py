@@ -21,6 +21,8 @@ with open(filename, 'rb') as f:
 N = g['N']
 row = g['row']
 col = g['col']
+K = 5; #no. of clusters
+alphaDir = 0.2 * np.ones(K); #dirichlet param
 
 #row-column makes an edge
 
@@ -168,6 +170,8 @@ def run_inference(tr_split=0.8):
 
 	data = {};
 	data['N'] = N;
+	data['K'] = K;
+	data['alphaDir'] = alphaDir;
 	X_tr = np.zeros([N,N]); #adjacency matrix train
 	X_ts = np.zeros([N,N]); #adjacency matrix test
 
