@@ -65,6 +65,7 @@ functions{
 
 data{
 	int<lower=0> N;
+	int<lower=1> K;
 	matrix[N,N] X_tr;
 	matrix[N,N] X_ts;
 	vector[K] alphaDir; //dirichlet hyper param
