@@ -73,6 +73,13 @@ data{
 	real beta;
 }
 
+transformed data{
+  real a;
+  real b;
+  a = 1.0;
+  b = 1.0;
+}
+
 parameters{
 	real<lower=0.001, upper=0.99> alpha; //parameter of distribution
 	vector<lower=0>[N] w; //scalar embedding of graph rep. by X
