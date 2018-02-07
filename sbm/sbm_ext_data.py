@@ -3,6 +3,7 @@ from __future__ import division
 import cPickle
 import pystan
 from pystan import StanModel
+import pickle
 
 import numpy as np
 
@@ -20,7 +21,7 @@ dataset = '500Air.pickle';
 
 filename = DATA_ROOT+dataset
 with open(filename, 'rb') as f:
-    g = pickle.load(f)
+    g = cPickle.load(f)
 
 N = g['N']
 row = g['row']
