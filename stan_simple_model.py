@@ -1,4 +1,9 @@
+"""
+RuntimeError: stan::variational::advi::adapt_eta: 
+Cannot compute ELBO using the initial variational distribution. 
+Your model may be either severely ill-conditioned or misspecified.
 
+"""
 from __future__ import division
 import numpy as np
 import statsmodels.api as sm
