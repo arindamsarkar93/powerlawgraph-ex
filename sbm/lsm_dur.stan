@@ -31,7 +31,7 @@ transformed parameters{
   for(i in 1:D){
     for(j in 1:D){
       if(i==j && i>1){
-        lambda[i][i] = (1/nu[d]);
+        lambda[i][i] = (1/nu[i]);
       }
 
       else{
