@@ -25,7 +25,7 @@ transformed parameters{
   //multiplicative inverse gamma prior
   cov_matrix[D] lambda; //relative embedding importance - positive def. scaling matrix
   //positiveness taken care by priors 
-  
+
   for(i in 1:D){
     for(j in 1:D){
       lambda[i][j] = 1/nu[1];
@@ -38,9 +38,12 @@ transformed parameters{
 }
 
 model{
-  for(i in 1:K){
-    for(j in 1:K){
+  for(i in 1:N){
+    for(j in 1:N){
       Z[i][j] ~ normal(0,1); //prior on Z --> over simplistic?
+    }
+
+    for(j in 1:D){
       X[i][j] ~ normal(0,1);
     }
   }
