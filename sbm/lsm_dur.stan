@@ -51,7 +51,7 @@ model{
   //a,b being hyperparameters
   nu[1] ~ gamma(a,1);
 
-  for(i in 1:D){
+  for(d in 1:D){
     nu[d] ~ gamma(b,1);
   }
 
