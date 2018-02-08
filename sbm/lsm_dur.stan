@@ -26,15 +26,22 @@ transformed parameters{
   cov_matrix[D] lambda; //relative embedding importance - positive def. scaling matrix
   //positiveness taken care by priors 
 
+  lambda[1][1] = 1/nu[1];
+
   for(i in 1:D){
     for(j in 1:D){
-      lambda[i][j] = 1/nu[1];
+      if(i==j && i>1){
+        for(d in 1:i){
+          lambda[i][i] = lambda[i][i] * (1/nu[d]);
+        }
+      }
 
-      for(d in 2:D){
-        lambda[i][j] = lambda[i][j] * (1/(nu[d]));
+      else{
+        lambda[i][j] = 0;
       }
     }
   }
+
 }
 
 model{
@@ -57,7 +64,7 @@ model{
 
   for(i in 1:N){
     for(j in 1:N){
-      graph[i][j] ~ bernoulli(inv_logit(Z[i][j] + X[i] * diagonal(lambda) * X[j]'));
+      graph[i][j] ~ bernoulli(inv_logit(Z[i][j] + X[i] * lambda * X[j]'));
     }
   }
 }
