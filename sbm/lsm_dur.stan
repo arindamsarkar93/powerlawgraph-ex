@@ -16,14 +16,14 @@ transformed data{
 }
 
 parameters{
-  matrix Z[N,N]; //per edge bias
+  matrix[N,N] Z; //per edge bias
   vector[D] X[N]; //node embeddings
   real<lower=machine_precision()> nu[D];   
 }
 
 transformed parameters{
   //multiplicative inverse gamma prior
-  cov_matrix<lower=machine_precision()> lambda[D,D]; //relative embedding importance <--positive def. scaling matrix
+  cov_matrix<lower=machine_precision()> [D,D] lambda; //relative embedding importance <--positive def. scaling matrix
   for(i in 1:D){
     for(j in 1:D){
       lambda[i][j] = 1/nu[1];
