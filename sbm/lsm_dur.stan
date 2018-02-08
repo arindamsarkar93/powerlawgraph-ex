@@ -27,14 +27,11 @@ transformed parameters{
   //positiveness taken care by priors 
   //matrix[N,N] il_param; //inv logit param
 
-  lambda[1][1] = 1/nu[1];
-
+  //inv. gamma instead of mult inv gamma -- to handle some issues
   for(i in 1:D){
     for(j in 1:D){
       if(i==j && i>1){
-        for(d in 1:i){
-          lambda[i][i] = lambda[i][i] * (1/nu[d]);
-        }
+        lambda[i][i] = (1/nu[d]);
       }
 
       else{
