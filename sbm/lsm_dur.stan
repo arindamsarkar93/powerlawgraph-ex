@@ -17,7 +17,7 @@ transformed data{
 
 parameters{
   matrix[N,N] Z; //per edge bias
-  vector[D] X[N]; //node embeddings
+  row_vector[D] X[N]; //node embeddings
   real<lower=machine_precision()> nu[D];   
 }
 
