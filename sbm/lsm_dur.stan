@@ -23,7 +23,7 @@ parameters{
 
 transformed parameters{
   //multiplicative inverse gamma prior
-  cov_matrix<lower=machine_precision()> [D,D] lambda; //relative embedding importance <--positive def. scaling matrix
+  cov_matrix<lower=machine_precision()> [D] lambda; //relative embedding importance - positive def. scaling matrix
   for(i in 1:D){
     for(j in 1:D){
       lambda[i][j] = 1/nu[1];
