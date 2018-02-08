@@ -75,12 +75,7 @@ generated quantities{
 
   for(i in 1:N){
     for(j in 1:N){
-      for(i in 1:N){
-        for(j in 1:N){
-          log_lik += bernoulli_lpmf(inv_logit(Z[i][j] + X[i] * diagonal(lambda) * X[j]'));
-        }
-      }
+      log_lik += bernoulli_lpmf(inv_logit(Z[i][j] + X[i] * diagonal(lambda) * X[j]'));
     }
   }
-
 }
