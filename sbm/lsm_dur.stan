@@ -18,13 +18,14 @@ transformed data{
 parameters{
   matrix[N,N] Z; //per edge bias
   row_vector[D] X[N]; //node embeddings
-  real<lower=machine_precision()> nu[D];   
+  real<lower=-machine_precision()> nu[D];   
 }
 
 transformed parameters{
   //multiplicative inverse gamma prior
   matrix[D,D] lambda; //relative embedding importance - xx[positive def.] scaling matrix
   //positiveness taken care by priors 
+  //matrix[N,N] il_param; //inv logit param
 
   lambda[1][1] = 1/nu[1];
 
@@ -41,6 +42,14 @@ transformed parameters{
       }
     }
   }
+
+  /*
+  for(i in 1:N){
+    for(j in 1:N){
+      il_param[i][j] = max(0,Z[i][j] + X[i] * lambda * X[j]');
+    }
+  }
+  */
 
 }
 
@@ -64,7 +73,7 @@ model{
 
   for(i in 1:N){
     for(j in 1:N){
-      graph[i][j] ~ bernoulli(inv_logit(machine_precision() + Z[i][j] + X[i] * lambda * X[j]'));
+      graph[i][j] ~ bernoulli(inv_logit(Z[i][j] + X[i] * lambda * X[j]'));
     }
   }
 }
@@ -72,10 +81,12 @@ model{
 generated quantities{
   //likelihood?
   real log_lik = 0.0;
+  //real param;
 
   for(i in 1:N){
     for(j in 1:N){
-      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(machine_precision() + Z[i][j] + X[i] * lambda * X[j]'));
+      //param = max(0,Z[i][j] + X[i] * lambda * X[j]');
+      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(Z[i][j] + X[i] * lambda * X[j]'));
     }
   }
 }
