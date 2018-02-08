@@ -23,7 +23,7 @@ parameters{
 
 transformed parameters{
   //multiplicative inverse gamma prior
-  matrix[D,D] lambda; //relative embedding importance - xx[positive def.] scaling matrix
+  matrix<upper=100>[D,D] lambda; //relative embedding importance - xx[positive def.] scaling matrix
   //positiveness taken care by priors 
   //matrix[N,N] il_param; //inv logit param
 
