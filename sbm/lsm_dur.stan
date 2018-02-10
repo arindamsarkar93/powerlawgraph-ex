@@ -16,9 +16,9 @@ transformed data{
 }
 
 parameters{
-  matrix<lower=-0.0001>[N,N] Z; //per edge bias
+  //matrix<lower=-0.0001>[N,N] Z; //per edge bias --> not required for single network
   row_vector<lower=-0.0001>[D] X[N]; //node embeddings
-  real<lower=0.001> nu[D]; 
+  real<lower=0.001> nu[D];
 }
 
 transformed parameters{
@@ -30,7 +30,7 @@ transformed parameters{
   //inv. gamma instead of mult inv gamma -- to handle some issues
   for(i in 1:D){
     for(j in 1:D){
-      if(i==j && i>1){
+      if(i==j){
         lambda[i][i] = (1/nu[i]);
       }
 
@@ -52,10 +52,6 @@ transformed parameters{
 
 model{
   for(i in 1:N){
-    for(j in 1:N){
-      Z[i][j] ~ normal(0,1); //prior on Z --> over simplistic?
-    }
-
     for(j in 1:D){
       X[i][j] ~ normal(0,1);
     }
@@ -70,7 +66,7 @@ model{
 
   for(i in 1:N){
     for(j in 1:N){
-      graph[i][j] ~ bernoulli(inv_logit(Z[i][j] + X[i] * lambda * X[j]'));
+      graph[i][j] ~ bernoulli(inv_logit(X[i] * lambda * X[j]'));
     }
   }
 }
@@ -83,7 +79,7 @@ generated quantities{
   for(i in 1:N){
     for(j in 1:N){
       //param = max(0,Z[i][j] + X[i] * lambda * X[j]');
-      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(Z[i][j] + X[i] * lambda * X[j]'));
+      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(X[i] * lambda * X[j]'));
     }
   }
 }
