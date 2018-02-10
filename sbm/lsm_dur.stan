@@ -66,7 +66,7 @@ model{
 
   for(i in 1:N){
     for(j in 1:N){
-      graph[i][j] ~ bernoulli(inv_logit(X[i] * lambda * X[j]'));
+      graph[i][j] ~ bernoulli(inv_logit(X[i] * lambda * X[j]') - machine_precision());
     }
   }
 }
@@ -79,7 +79,7 @@ generated quantities{
   for(i in 1:N){
     for(j in 1:N){
       //param = max(0,Z[i][j] + X[i] * lambda * X[j]');
-      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(X[i] * lambda * X[j]'));
+      log_lik += bernoulli_lpmf(graph[i][j]|inv_logit(X[i] * lambda * X[j]') - machine_precision());
     }
   }
 }
