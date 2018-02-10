@@ -17,13 +17,13 @@ transformed data{
 
 parameters{
   //matrix<lower=-0.0001>[N,N] Z; //per edge bias --> not required for single network
-  row_vector<lower=-0.0001>[D] X[N]; //node embeddings
-  real<lower=0.001> nu[D];
+  row_vector[D] X[N]; //node embeddings
+  real<lower=-machine_precision()> nu[D];
 }
 
 transformed parameters{
   //multiplicative inverse gamma prior
-  matrix<upper=100>[D,D] lambda; //relative embedding importance - xx[positive def.] scaling matrix
+  matrix[D,D] lambda; //relative embedding importance - xx[positive def.] scaling matrix
   //positiveness taken care by priors 
   //matrix[N,N] il_param; //inv logit param
 
